@@ -1,0 +1,178 @@
+package environment;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import agents.RealAgent;
+import agents.TeammateAgent;
+import path.Path;
+import org.jgrapht.alg.*;
+import org.jgrapht.*;
+import org.jgrapht.graph.*;
+
+/**
+ * Build w_p
+ *
+ * @author Mattia
+ *
+ */
+public class WeightGrid {
+
+    private int[][] weightMatrix;
+    private int size = 0;
+
+    //private Dijkstra dijkstra;
+    public WeightGrid(RealAgent agent) {
+        this.size = 0;
+        //this.dijkstra = new Dijkstra();
+    }
+
+    /*public void update(RealAgent agent){
+     HashMap<Integer, Location> locations = (HashMap) agent.getLocationIDs();
+     if (locations.isEmpty()) {
+     return;
+     }
+        
+     weightMatrix = dijkstra.computeMatrix(agent);
+
+
+     }*/
+    public void update(RealAgent agent) {
+        System.out.println("Updating distance matrix.");
+
+        HashMap<Integer, Location> locations = (HashMap) agent.getLocationIDs();
+        if (locations.isEmpty()) {
+            return;
+        }
+
+        int numLoc = agent.getLocNumber();
+
+        int[][] oldWeightMatrix = weightMatrix;
+        weightMatrix = new int[numLoc][numLoc];
+
+        if (size != 0) {
+            //copy the old part of the matrix
+            for (int i = 0; i < size; i++) {
+                System.arraycopy(oldWeightMatrix[i], 0, weightMatrix[i], 0, size);
+            }
+        }
+
+        for (int i = 0; i < numLoc; i++) {
+            for (int j = 0; j < numLoc; j++) {
+                if (i >= size || j >= size) {
+                    weightMatrix[i][j] = -1;
+                }
+            }
+        }
+
+        ArrayList<Point> locReadyRobots = new ArrayList<Point>();
+        for (TeammateAgent t : agent.getAllTeammates().values()) {
+            if (t.isReady()) {
+                locReadyRobots.add(new Point(t.getLocation()));
+            }
+        }
+        //locReadyRobots.add(agent.getLocation());
+
+        for (Map.Entry<Integer, Location> entry : locations.entrySet()) {
+            Integer id1 = entry.getKey();
+            Location loc1 = entry.getValue();
+            for (int id2 = 0; id2 < numLoc; id2++) {
+                /*if (id1 < size && id2 < size) {
+                 continue;
+                 }*/
+                Location loc2 = locations.get(id2);
+
+                if ((weightMatrix[id1][id2] == -1) && (locReadyRobots.contains(loc1.getPosition()) || locReadyRobots.contains(loc2.getPosition()))) {
+                    if (weightMatrix[id1][id2] == -1 && weightMatrix[id2][id1] != -1) {
+                        weightMatrix[id1][id2] = weightMatrix[id2][id1];
+                    } else {
+                        //if in line of sight, I use the euclidean distance as perfect estimate
+                        if (agent.getOccupancyGrid().directLinePossible3((int) loc1.getPosition().getX(), (int) loc1.getPosition().getY(), (int) loc2.getPosition().getX(), (int) loc2.getPosition().getY())) {
+                            weightMatrix[id1][id2] = (int) loc1.getPosition().distance(loc2.getPosition());
+                        } else {
+                            Path p = agent.calculatePath(loc1.getPosition(), loc2.getPosition(), true);
+                            weightMatrix[id1][id2] = (int) p.getLength();
+
+                            if (weightMatrix[id1][id2] == 0) {
+                                p = agent.calculatePath(loc2.getPosition(), loc1.getPosition(), true);
+                                weightMatrix[id1][id2] = (int) p.getLength();
+                            }
+
+                            if (weightMatrix[id1][id2] == 0 && loc1.getPosition().distance(loc2.getPosition()) > 10) {
+                                weightMatrix[id1][id2] = 1000000;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        size = numLoc;
+
+    }
+
+    public int[][] getWeightMatrix() {
+        return this.weightMatrix;
+    }
+
+    public HashMap<Integer, ArrayList<Integer>> getOtherDistances(RealAgent agent) {
+
+        System.out.println("Getting other distances");
+        HashMap<Integer, ArrayList<Integer>> notReady = new HashMap<Integer, ArrayList<Integer>>();
+
+        for (TeammateAgent t : agent.getAllTeammates().values()) {
+            if (!t.isReady()) { //&& is in range?
+                if (t.isInRange()) {
+                    ArrayList<Integer> distances = new ArrayList<Integer>();
+                    for (int i = 0; i < this.size; i++) {
+                        Location loc2 = agent.getLocationIDs().get(i);
+
+                        Path p = agent.calculatePath(t.getLocation(), loc2.getPosition(), true);
+
+                        if ((int) p.getLength() == 0) {
+                            p = agent.calculatePath(loc2.getPosition(), t.getLocation(), true);
+                        }
+
+                        if ((int) p.getLength() == 0 && t.getLocation().distance(loc2.getPosition()) > 1) {
+                            distances.add(1000000);
+                        } else {
+                            distances.add((int) p.getLength());
+                        }
+
+                    }
+                    notReady.put(t.getID() - 1, distances);
+                } else {
+                    //The same, but an estimate of the current position must be used
+
+                    ArrayList<Integer> distances = new ArrayList<Integer>();
+                    for (int i = 0; i < this.size; i++) {
+                        Location loc2 = agent.getLocationIDs().get(i);
+
+                        Path p = agent.calculatePath(t.getPositionEstimate(), loc2.getPosition());
+
+                        if ((int) p.getLength() == 0) {
+                            p = agent.calculatePath(loc2.getPosition(), t.getPositionEstimate());
+                        }
+
+                        if ((int) p.getLength() == 0 && t.getLocation().distance(loc2.getPosition()) > 1) {
+                            distances.add(1000000);
+                        } else {
+                            distances.add((int) p.getLength());
+                        }
+
+                    }
+                    notReady.put(t.getID() - 1, distances);
+
+                }
+
+            }
+        }
+
+        return notReady;
+
+    }
+
+}
