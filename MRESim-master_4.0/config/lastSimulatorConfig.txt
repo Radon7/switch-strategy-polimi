@@ -1,5 +1,5 @@
-RoleBasedExploration
-PeriodicReturn
+SwitchExploration
+UtilReturn
 logs/agent_log.txt
 DirectLine
 true
@@ -15,11 +15,11 @@ false
 10
 false
 false
-0.5
+0.85
 1
 0
 4
 60
 1
 true
-900
+2500

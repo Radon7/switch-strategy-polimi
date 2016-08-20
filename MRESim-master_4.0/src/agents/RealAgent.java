@@ -1837,9 +1837,12 @@ public class RealAgent extends BasicAgent implements Agent {
         if (msg.ID == Constants.BASE_STATION_ID) {
             this.timeLastContactBS = 1;
         }
-
-        if ((simConfig != null) && (simConfig.getExpAlgorithm() == SimulatorConfig.exptype.FrontierExploration)
-                && (simConfig.getFrontierAlgorithm() == SimulatorConfig.frontiertype.UtilReturn)) {
+        
+        //When the simulation is running and I'm using the UtilityExploration (Spirin) or Using the SwitchExploration (in Relaying mode) 
+        //I need to communicate the area relayed (otherwise all agents in ReturnToParent state)
+        if ((simConfig != null) && (((simConfig.getExpAlgorithm() == SimulatorConfig.exptype.FrontierExploration)
+                && (simConfig.getFrontierAlgorithm() == SimulatorConfig.frontiertype.UtilReturn))
+                || (simConfig.getExpAlgorithm() == SimulatorConfig.exptype.SwitchExploration && !SwitchExploration.isMultiHopping()))) {
             updateAreaRelayed(teammate);
         }
         if (teammate.getTimeLastCentralCommand() < timeLastCentralCommand) {

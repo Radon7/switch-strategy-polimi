@@ -82,10 +82,13 @@ public class UtilityExploration {
         // Explore is normal exploration, ReturnToParent is relaying information to base
         switch(agent.getState()) {
             case Initial :          nextStep = takeStep_Initial(agent, simConfig);
+                                    System.err.println("UTIL EXPLORATION: initial");
                                     break;
             case Explore :          nextStep = takeStep_Explore(agent, simConfig);
+                                    System.err.println("UTIL EXPLORATION: explore");
                                     break;
             case ReturnToParent :   nextStep = takeStep_ReturnToParent(agent, simConfig);
+                                    System.err.println("UTIL EXPLORATION: back to parent");
                                     break;
             default :               break;
         }

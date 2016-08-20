@@ -934,7 +934,9 @@ public class SimulationFramework implements ActionListener {
 
                 if ((simConfig.getExpAlgorithm() == exptype.StumpExploration || simConfig.getExpAlgorithm() == exptype.IlpExploration
                         || simConfig.getExpAlgorithm() == exptype.ApproxExploration || simConfig.getExpAlgorithm() == exptype.MixedExploration 
-                        || (simConfig.getExpAlgorithm() == exptype.SwitchExploration && SwitchExploration.isMultiHopping())                        || simConfig.getExpAlgorithm() == exptype.BirkExploration || simConfig.getExpAlgorithm() == exptype.DemurIlpExploration) && timeElapsed >= Constants.INIT_CYCLES) {
+                        || (simConfig.getExpAlgorithm() == exptype.SwitchExploration && SwitchExploration.isMultiHopping())                        
+                        || simConfig.getExpAlgorithm() == exptype.BirkExploration 
+                        || simConfig.getExpAlgorithm() == exptype.DemurIlpExploration) && timeElapsed >= Constants.INIT_CYCLES) {
                     try {
                         switch (simConfig.getExpAlgorithm()) {
                             case StumpExploration:
@@ -1137,7 +1139,8 @@ public class SimulationFramework implements ActionListener {
                 || simConfig.getExpAlgorithm() == exptype.IlpExploration
                 || simConfig.getExpAlgorithm() == exptype.MixedExploration
                 || simConfig.getExpAlgorithm() == exptype.DemurIlpExploration
-                || simConfig.getExpAlgorithm() == exptype.SwitchExploration) {
+                //only when I behave as AsyncExploration
+                || (simConfig.getExpAlgorithm() == exptype.SwitchExploration && SwitchExploration.isMultiHopping())) {
             for (TeammateAgent t : agent[0].getAllTeammates().values()) {
                 t.setInRange(false);
             }
