@@ -68,7 +68,7 @@ public class BasicAgent implements Agent {
     
     RobotConfig.roletype role;
 
-    public static enum ExploreState {Initial, Explore, ReturnToParent, WaitForParent, GiveParentInfo, GoToChild, WaitForChild, GetInfoFromChild, OutOfService}
+    public static enum ExploreState {Initial, Explore, ReturnToParent, WaitForParent, GiveParentInfo, GoToChild, WaitForChild, GetInfoFromChild, OutOfService, SwitchWait}
     private ExploreState state;
 
     int parent;             // Should keep ID and NOT RobotNumber of the parent

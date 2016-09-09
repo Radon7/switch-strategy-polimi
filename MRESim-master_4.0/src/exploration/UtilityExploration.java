@@ -195,6 +195,13 @@ public class UtilityExploration {
     private static Point takeStep_ReturnToParent(RealAgent agent, SimulatorConfig simConfig) { 
         //<editor-fold defaultstate="collapsed" desc="If base is in range, go back to exploring">
         if(agent.getTeammate(Constants.BASE_STATION_ID).isInRange()) {
+            if ((SwitchExploration.getState() == SwitchExploration.SwitchState.RendezVous ||
+                    SwitchExploration.getState() == SwitchExploration.SwitchState.Wait) 
+                    && timeElapsed>150){
+                SwitchExploration.setState(SwitchExploration.SwitchState.Wait);
+                return agent.getLocation();
+            }
+                
             agent.setState(RealAgent.ExploreState.Explore);
             agent.setStateTimer(0);
             return takeStep_Explore(agent, simConfig);

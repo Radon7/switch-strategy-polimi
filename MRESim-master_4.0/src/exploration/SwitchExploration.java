@@ -35,37 +35,55 @@ public class SwitchExploration {
         // <editor-fold defaultstate="collapsed" desc="if initial i'll do multilhop">
         // </editor-fold>
         
-        // <editor-fold defaultstate="collapsed" desc="if i need switch">
+       
       
             
         // </editor-fold>
         switch(state){
+            
+            // <editor-fold defaultstate="collapsed" desc="MULTIHOPPING step">
             case MultiHopping:
                 System.err.println("Doing MULTIHOPPING with ROBOT" + agent.getName());
                 return AsyncExploration.takeStep(agent, timeElapsed, frontierExpType.ReturnWhenComplete, simConfig);
+            // </editor-fold>
                 
+            // <editor-fold defaultstate="collapsed" desc="RENDEZVOUS step">
             case RendezVous:
-                //trying to switch back to multiholoping by moving all the robots to BS
-                
-                //moving to Utility Exploration
                 System.err.println("Doing UTILITYexp with ROBOT" + agent.getName());
+                /*if(timeElapsed > 200){
+                     if (agent.getTeammate(Constants.BASE_STATION_ID).isInRange()){
+                    agent.setState(BasicAgent.ExploreState.SwitchWait);
+                     }else{
+                        agent.setState(BasicAgent.ExploreState.ReturnToParent);
+                     }
+                }*/
                 return UtilityExploration.takeStep(agent, timeElapsed, simConfig);
-            
+            // </editor-fold>
+                
+            // <editor-fold defaultstate="collapsed" desc="WAIT step">
             case Wait:
-                if (agent.getRobotNumber() == (Constants.BASE_STATION_ID)){
-                    ArrayList<TeammateAgent> commTeam = new ArrayList<TeammateAgent>();
-                    for (TeammateAgent t : agent.getAllTeammates().values()){
-                        if (t.isInRange()){
-                            commTeam.add(t);
-                        }
-                    }
-                    if (commTeam.size() == agent.getAllTeammates().values().size()){
-                        state = SwitchState.MultiHopping;
+                System.err.println("I'M in WAIT, robot" + agent.getName());
+
+                ArrayList<TeammateAgent> commTeam = new ArrayList<TeammateAgent>();
+                for (TeammateAgent t : agent.getAllTeammates().values()){
+                    if (t.isInRange()){
+                        commTeam.add(t);
                     }
                 }
-                return agent.getLocation();
+                System.err.println("commTeamSize = "+commTeam.size());
+                System.err.println("Team size = "+agent.getAllTeammates().values().size());
+                if (commTeam.size() == agent.getAllTeammates().values().size()){
+                    state = SwitchState.MultiHopping;
+                }
+                
+                return UtilityExploration.takeStep(agent, timeElapsed, simConfig);
+                
+                 
+                
+            // </editor-fold>
+            // This should never happen;
             default:
-                return null;
+                return agent.getLocation();
         }
         
     }
@@ -76,16 +94,19 @@ public class SwitchExploration {
     public static HashMap<Integer, Point> replan(RealAgent agent,
             SimulatorConfig.frontiertype frontierExpType, int timeElapsed,
             SimulatorConfig simConfig) throws FileNotFoundException {
-        
-        if (agent.getPercentageKnown() > 0.3 && agent.getRole().equals(RobotConfig.roletype.BaseStation)){
+        //This happens when I need to switch the exploration Type
+        if (agent.getPercentageKnown() > 0.3 && agent.getRole().equals(RobotConfig.roletype.BaseStation) && timeElapsed < 150){
             state = SwitchState.RendezVous;
-            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FUUUUUUU");
         }
         return AsyncExploration.replan(agent, frontierExpType.ReturnWhenComplete, timeElapsed, simConfig);
     }
     
     public static SwitchState getState(){
         return state;
+    }
+    
+    public static void setState(SwitchState s){
+        state = s;
     }
 
     // </editor-fold>
