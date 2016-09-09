@@ -28,39 +28,20 @@ public class SwitchExploration {
     public static enum SwitchState {MultiHopping, RendezVous, Wait};
     private static SwitchState state = SwitchState.MultiHopping;
     
-    
+    //<editor-fold defaultstate="collapsed" desc="TAKE STEP">
     public static Point takestep(RealAgent agent, int timeElapsed,
             SimulatorConfig.frontiertype frontierExpType, SimulatorConfig simConfig)
             throws FileNotFoundException {
-        // <editor-fold defaultstate="collapsed" desc="if initial i'll do multilhop">
-        // </editor-fold>
         
-       
-      
-            
-        // </editor-fold>
         switch(state){
-            
-            // <editor-fold defaultstate="collapsed" desc="MULTIHOPPING step">
             case MultiHopping:
                 System.err.println("Doing MULTIHOPPING with ROBOT" + agent.getName());
                 return AsyncExploration.takeStep(agent, timeElapsed, frontierExpType.ReturnWhenComplete, simConfig);
-            // </editor-fold>
-                
-            // <editor-fold defaultstate="collapsed" desc="RENDEZVOUS step">
+           
             case RendezVous:
                 System.err.println("Doing UTILITYexp with ROBOT" + agent.getName());
-                /*if(timeElapsed > 200){
-                     if (agent.getTeammate(Constants.BASE_STATION_ID).isInRange()){
-                    agent.setState(BasicAgent.ExploreState.SwitchWait);
-                     }else{
-                        agent.setState(BasicAgent.ExploreState.ReturnToParent);
-                     }
-                }*/
                 return UtilityExploration.takeStep(agent, timeElapsed, simConfig);
-            // </editor-fold>
-                
-            // <editor-fold defaultstate="collapsed" desc="WAIT step">
+
             case Wait:
                 System.err.println("I'M in WAIT, robot" + agent.getName());
 
@@ -77,17 +58,16 @@ public class SwitchExploration {
                 }
                 
                 return UtilityExploration.takeStep(agent, timeElapsed, simConfig);
-                
-                 
-                
-            // </editor-fold>
+           
             // This should never happen;
             default:
                 return agent.getLocation();
         }
         
     }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Replanning funtion">
     /*
         Replan only when AsyncExploration is needed
      */
@@ -100,6 +80,7 @@ public class SwitchExploration {
         }
         return AsyncExploration.replan(agent, frontierExpType.ReturnWhenComplete, timeElapsed, simConfig);
     }
+    // </editor-fold>
     
     public static SwitchState getState(){
         return state;
@@ -109,5 +90,5 @@ public class SwitchExploration {
         state = s;
     }
 
-    // </editor-fold>
+
 }
