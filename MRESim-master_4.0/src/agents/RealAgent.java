@@ -1842,7 +1842,8 @@ public class RealAgent extends BasicAgent implements Agent {
         //I need to communicate the area relayed (otherwise all agents in ReturnToParent state)
         if ((simConfig != null) && (((simConfig.getExpAlgorithm() == SimulatorConfig.exptype.FrontierExploration)
                 && (simConfig.getFrontierAlgorithm() == SimulatorConfig.frontiertype.UtilReturn))
-                || (simConfig.getExpAlgorithm() == SimulatorConfig.exptype.SwitchExploration && !SwitchExploration.isMultiHopping()))) {
+                || (simConfig.getExpAlgorithm() == SimulatorConfig.exptype.SwitchExploration 
+                && SwitchExploration.getState().equals(SwitchExploration.SwitchState.RendezVous)))) {
             updateAreaRelayed(teammate);
         }
         if (teammate.getTimeLastCentralCommand() < timeLastCentralCommand) {

@@ -934,7 +934,7 @@ public class SimulationFramework implements ActionListener {
 
                 if ((simConfig.getExpAlgorithm() == exptype.StumpExploration || simConfig.getExpAlgorithm() == exptype.IlpExploration
                         || simConfig.getExpAlgorithm() == exptype.ApproxExploration || simConfig.getExpAlgorithm() == exptype.MixedExploration 
-                        || (simConfig.getExpAlgorithm() == exptype.SwitchExploration && SwitchExploration.isMultiHopping())                        
+                        || (simConfig.getExpAlgorithm() == exptype.SwitchExploration && SwitchExploration.getState().equals(SwitchExploration.SwitchState.MultiHopping))                        
                         || simConfig.getExpAlgorithm() == exptype.BirkExploration 
                         || simConfig.getExpAlgorithm() == exptype.DemurIlpExploration) && timeElapsed >= Constants.INIT_CYCLES) {
                     try {
@@ -1004,7 +1004,7 @@ public class SimulationFramework implements ActionListener {
                             agent[k].setM_opt(new Point(agent[0].getM_opt_p().get(k)));
 
                             if ((simConfig.getExpAlgorithm() == exptype.ApproxExploration || simConfig.getExpAlgorithm() == exptype.IlpExploration 
-                                    || (simConfig.getExpAlgorithm() == exptype.SwitchExploration && SwitchExploration.isMultiHopping())
+                                    || (simConfig.getExpAlgorithm() == exptype.SwitchExploration && SwitchExploration.getState().equals(SwitchExploration.SwitchState.MultiHopping))
                                     || simConfig.getExpAlgorithm() == exptype.MixedExploration) && !agent[k].getCurrentGoal().equals(agent[k].getM_opt())) {
                                 agent[k].setCurrentGoal(new Point(agent[k].getM_opt()));
                                 
@@ -1140,7 +1140,7 @@ public class SimulationFramework implements ActionListener {
                 || simConfig.getExpAlgorithm() == exptype.MixedExploration
                 || simConfig.getExpAlgorithm() == exptype.DemurIlpExploration
                 //only when I behave as AsyncExploration
-                || (simConfig.getExpAlgorithm() == exptype.SwitchExploration && SwitchExploration.isMultiHopping())) {
+                || (simConfig.getExpAlgorithm() == exptype.SwitchExploration && SwitchExploration.getState().equals(SwitchExploration.SwitchState.MultiHopping))) {
             for (TeammateAgent t : agent[0].getAllTeammates().values()) {
                 t.setInRange(false);
             }

@@ -1,5 +1,5 @@
-1 BaseStation 120 310 0.0 0 75 1000 BaseStation 1 1
-2 A 125 310 0.0 50 75 1000 Relay 1 1
-3 B 155 310 0.0 50 75 1000 Relay 1 1
-4 C 125 320 0.0 50 75 1000 Explorer 1 1
-5 D 155 320 0.0 50 75 1000 Relay 1 1
+1 BaseStation 150 105 0.0 0 50 1000 BaseStation 1 1
+2 A 130 120 0.0 100 50 1000 Relay 1 4
+3 B 170 120 0.0 100 50 1000 Relay 1 5
+4 C 130 90 0.0 100 50 1000 Explorer 2 1
+5 D 170 90 0.0 100 50 1000 Explorer 3 1

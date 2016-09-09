@@ -1,7 +1,7 @@
 SwitchExploration
 UtilReturn
 logs/agent_log.txt
-DirectLine
+StaticCircle
 true
 logs/agent_log.txt
 true
@@ -10,11 +10,11 @@ false
 /video
 true
 false
-true
+false
 false
 10
 false
-false
+true
 0.85
 1
 0
